@@ -20,4 +20,17 @@ describe('Handler', () => {
     const [order] = orders
     expect(typeof order.O_ID).toBe('string');
   })
+
+  it('Only returns Shift OMS orders', () => {
+    const data = handler(event, context);
+
+    const { ORDERS: orders } = data;
+
+    expect(orders.length).toEqual(2);
+
+    const [order1, order2] = orders;
+
+    expect(order1.O_ID).toBe(order1.OMS_ORDER_ID);
+    expect(order2.O_ID).toBe(order2.OMS_ORDER_ID);
+  })
 })

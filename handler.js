@@ -1,5 +1,9 @@
 const handler = (event, context) => {
-  return JSON.parse(event.body);
+  const data = JSON.parse(event.body);
+
+  data.ORDERS = data.ORDERS.filter(order => order.O_ID === order.OMS_ORDER_ID);
+
+  return data;
 }
 
 module.exports = handler
