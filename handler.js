@@ -11,12 +11,18 @@ const handler = (event, context) => {
     return executionResult.failure('JSON unparseable');
   }
 
-  const orders = filterOutNonShiftOMSOrders(data.ORDERS);
+  try
+  {
+    const orders = filterOutNonShiftOMSOrders(data.ORDERS);
 
-  const fulfillment = fulfillmentOrders(orders);
-  const cancellation = cancellationOrders(orders);
+    const fulfillment = fulfillmentOrders(orders);
+    const cancellation = cancellationOrders(orders);
 
-  return executionResult.success({ fulfillment, cancellation });
+    return executionResult.success({ fulfillment, cancellation });
+  } catch (ex)
+  {
+    return executionResult.failure('Data does not match schema');
+  }
 }
 
 const filterOutNonShiftOMSOrders = orders => {

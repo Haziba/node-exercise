@@ -9,6 +9,10 @@ const invalidJsonEvent = {
   body: fs.readFileSync('./fixtures/invalidJson.txt', 'utf8')
 }
 
+const invalidSchemaEvent = {
+  body: fs.readFileSync('./fixtures/invalidSchema.json', 'utf8')
+}
+
 const context = {
   accountReference: 'acme'
 }
@@ -58,5 +62,12 @@ describe('Handler', () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('JSON unparseable');
+  })
+
+  it('Throws an exception when the data does not match the schema', () => {
+    const result = handler(invalidSchemaEvent, context);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Data does not match schema');
   })
 })
