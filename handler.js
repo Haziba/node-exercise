@@ -1,3 +1,5 @@
+const executionResult = require('./executionResult');
+
 const handler = (event, context) => {
   const data = JSON.parse(event.body);
 
@@ -6,7 +8,7 @@ const handler = (event, context) => {
   const fulfillment = fulfillmentOrders(orders);
   const cancellation = cancellationOrders(orders);
 
-  return { fulfillment, cancellation };
+  return executionResult.success({ fulfillment, cancellation });
 }
 
 const filterOutNonShiftOMSOrders = orders => {

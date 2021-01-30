@@ -11,9 +11,11 @@ const context = {
 
 describe('Handler', () => {
   it('Only returns Shift OMS orders', () => {
-    const data = handler(event, context);
+    const result = handler(event, context);
 
-    const allOrders = Object.keys(data).flatMap(key => data[key])
+    expect(result.success).toBe(true);
+
+    const allOrders = Object.keys(result.data).flatMap(key => result.data[key])
 
     expect(allOrders.length).toEqual(2);
 
@@ -24,9 +26,11 @@ describe('Handler', () => {
   })
 
   it('Classes an order as cancelled if the order lines are all for 0 quantity', () => {
-    const { _, cancellation } = handler(event, context);
+    const result = handler(event, context);
 
-    const [cancelledOrder] = cancellation;
+    expect(result.success).toBe(true);
+
+    const [cancelledOrder] = result.data.cancellation;
 
     const orderLineQuantities = cancelledOrder.ORDER_LINES.map(orderLine => parseInt(orderLine.QUANTITY));
 
@@ -34,9 +38,11 @@ describe('Handler', () => {
   })
 
   it('Classes an order as fulfillment if any order line is for more than 0 quantity', () => {
-    const { fulfillment, _ } = handler(event, context);
+    const result = handler(event, context);
 
-    const [fulfillmentOrder] = fulfillment;
+    expect(result.success).toBe(true);
+
+    const [fulfillmentOrder] = result.data.fulfillment;
 
     const orderLineQuantities = fulfillmentOrder.ORDER_LINES.map(orderLine => parseInt(orderLine.QUANTITY));
 
