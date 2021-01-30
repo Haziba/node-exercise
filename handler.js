@@ -1,7 +1,15 @@
 const executionResult = require('./executionResult');
 
 const handler = (event, context) => {
-  const data = JSON.parse(event.body);
+  let data;
+
+  try
+  {
+    data = JSON.parse(event.body);
+  } catch (ex)
+  {
+    return executionResult.failure('JSON unparseable');
+  }
 
   const orders = filterOutNonShiftOMSOrders(data.ORDERS);
 

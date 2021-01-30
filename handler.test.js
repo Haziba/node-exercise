@@ -1,8 +1,12 @@
 const fs = require('fs')
 const handler = require('./handler')
 
-const event = {
+const validEvent = {
   body: fs.readFileSync('./fixtures/shipments.json', 'utf8')
+}
+
+const invalidJsonEvent = {
+  body: fs.readFileSync('./fixtures/invalidJson.txt', 'utf8')
 }
 
 const context = {
@@ -11,7 +15,7 @@ const context = {
 
 describe('Handler', () => {
   it('Only returns Shift OMS orders', () => {
-    const result = handler(event, context);
+    const result = handler(validEvent, context);
 
     expect(result.success).toBe(true);
 
@@ -26,7 +30,7 @@ describe('Handler', () => {
   })
 
   it('Classes an order as cancelled if the order lines are all for 0 quantity', () => {
-    const result = handler(event, context);
+    const result = handler(validEvent, context);
 
     expect(result.success).toBe(true);
 
@@ -38,7 +42,7 @@ describe('Handler', () => {
   })
 
   it('Classes an order as fulfillment if any order line is for more than 0 quantity', () => {
-    const result = handler(event, context);
+    const result = handler(validEvent, context);
 
     expect(result.success).toBe(true);
 
@@ -47,5 +51,12 @@ describe('Handler', () => {
     const orderLineQuantities = fulfillmentOrder.ORDER_LINES.map(orderLine => parseInt(orderLine.QUANTITY));
 
     expect(Math.max.apply(this, orderLineQuantities)).toBeGreaterThanOrEqual(1);
+  })
+
+  it('Throws an exception when invalid JSON is passed through', () => {
+    const result = handler(invalidJsonEvent, context);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('JSON unparseable');
   })
 })
